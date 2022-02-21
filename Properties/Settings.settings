@@ -1,0 +1,46 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="LogErrorValidator.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ErrorLogs" Type="System.Collections.Specialized.StringCollection" Scope="Application">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+  &lt;string&gt;MASA info source disconnected&lt;/string&gt;
+  &lt;string&gt;No data from MASA info source for 60 seconds&lt;/string&gt;
+  &lt;string&gt;Failed to open file&lt;/string&gt;
+  &lt;string&gt;Failed to execute SQL command&lt;/string&gt;
+  &lt;string&gt;Failed to access database&lt;/string&gt;
+  &lt;string&gt;SQL returned message:&lt;/string&gt;
+  &lt;string&gt;SQL error&lt;/string&gt;
+  &lt;string&gt;was deadlocked&lt;/string&gt;
+  &lt;string&gt;Error: Failed to process&lt;/string&gt;
+  &lt;string&gt;GetStartTask - Failed&lt;/string&gt;
+  &lt;string&gt;CADOCommand Error&lt;/string&gt;
+  &lt;string&gt;Database can not be opened.&lt;/string&gt;
+  &lt;string&gt;CADODataBase Error&lt;/string&gt;
+  &lt;string&gt;Source disconnected.&lt;/string&gt;
+  &lt;string&gt;Connect Server: Fail&lt;/string&gt;
+  &lt;string&gt;Failed to generate OPX msg&lt;/string&gt;
+  &lt;string&gt;GetExecutionStatus - Failed&lt;/string&gt;
+  &lt;string&gt;GetStartTask - Database connection broken&lt;/string&gt;
+  &lt;string&gt;Database returned error message&lt;/string&gt;
+  &lt;string&gt;Database cannot be opened&lt;/string&gt;
+  &lt;string&gt;No Table Field to Update&lt;/string&gt;
+  &lt;string&gt;Data source disconnected&lt;/string&gt;
+  &lt;string&gt;No data from source for 60 seconds&lt;/string&gt;
+  &lt;string&gt;SQL Server does not exist or access denied&lt;/string&gt;
+  &lt;string&gt;Failed to Connected&lt;/string&gt;
+  &lt;string&gt;RFProcessorInput_GetFailed to connect FTP Server&lt;/string&gt;
+  &lt;string&gt;RFProcessorInput_Get - FTP File(s) Process fail&lt;/string&gt;
+  &lt;string&gt;System is not ready to request trading status&lt;/string&gt;
+  &lt;string&gt;Port [7100] is not ready to receive connection.&lt;/string&gt;
+  &lt;string&gt;COM ERROR&lt;/string&gt;
+  &lt;string&gt;Disconnected from Order Response Queue&lt;/string&gt;
+  &lt;string&gt;Disconnected due to not responding to the rest request&lt;/string&gt;
+  &lt;string&gt;Disconnected due to sequence number is smaller than expected&lt;/string&gt;
+  &lt;string&gt;(MMTP &amp;amp; Disconnected)&lt;/string&gt;
+  &lt;string&gt;(MMTP &amp;amp; Physical connection lost)&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
