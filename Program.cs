@@ -1,47 +1,99 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Collections.Specialized;
 
 namespace LogErrorValidator
 {
     internal class Program
     {
         // list of errors to catch
-        readonly StringCollection ErrorsToCheck = Properties.Settings.Default.ErrorLogs;
+        readonly System.Collections.Specialized.StringCollection ErrorsToCheck = Properties.Settings.Default.ErrorLogs;
 
-        const string pattern = @"\(.*&.*\)";
+        const string reg = @"^\(.*\)$";
+        const string reg1 = @".*&.*";
+        const string reg2 = @"^~\(.*\)$";
+        const string reg3 = @".*\[.*\].*";
 
-        public bool Checking(string logFile, string Path)
+        public bool Checking(string logLine, string Path)
         {
             // Perform check based on the regex pattern and the list of errors in app.config
-            foreach (string error in ErrorsToCheck)
+            foreach (string errorCode in ErrorsToCheck)
             {
-                if (Regex.IsMatch(error, pattern))
+                if (Regex.IsMatch(errorCode, reg))
                 {
-                    string str1 = error.Substring(error.IndexOf("(") + 1, error.IndexOf("&") - 1);
-                    string str2 = error.Substring(error.IndexOf("&") + 2);
-                    str2 = str2.Remove(str2.IndexOf(')'));
+                    if (Match(logLine, errorCode))
+                        return true;
 
-                    if ((logFile.Contains(str1) && logFile.Contains(str2))) return true;
+                    continue;
                 }
-                if (logFile.IndexOf(error, StringComparison.CurrentCultureIgnoreCase) > -1) return true;
+                if (logLine.IndexOf(errorCode, StringComparison.CurrentCultureIgnoreCase) > -1)
+                    return true;
             }
 
-            if ((logFile.Contains("Failed to load") && !(logFile.Contains("Failed to load stock history info")))) return true;
-
-            if (logFile.Contains("Info: Total of [") && logFile.Contains("] message(s) in queue"))
+            if ((Path.ToUpper().Contains("SMIS3")) && logLine.Contains("Real-time connection status (now/max/avg)") || logLine.Contains("HTTP connection status (now/max/avg/request)"))
             {
-                int amount = Convert.ToInt16(logFile.Substring(logFile.IndexOf("[") + 1, (logFile.IndexOf("]") - logFile.IndexOf("[")) - 1));
-                if (amount > 100) return true;
-            }
-
-            if ((Path.ToUpper().Contains("SMIS3")) && logFile.Contains("Real-time connection status (now/max/avg)") || logFile.Contains("HTTP connection status (now/max/avg/request)"))
-            {
-                string strTemp = logFile.Substring(logFile.IndexOf("):") + 2);
-                if (Convert.ToInt16(logFile.Substring(0, strTemp.IndexOf("/"))) >= 500) return true;
+                String strTemp = logLine.Substring(logLine.IndexOf("):") + 2);
+                if (Convert.ToInt16(logLine.Substring(0, strTemp.IndexOf("/"))) >= 500)
+                    return true;
             }
             return false;
+        }
+
+        public bool Match(string value, string errorCode)
+        {
+            if (Regex.IsMatch(errorCode, reg))
+            {
+                errorCode = GetString(errorCode, '(', true);
+
+                return Match(value, errorCode);
+            }
+
+            if (Regex.IsMatch(errorCode, reg1))
+            {
+                var str1 = errorCode.Substring(0, errorCode.IndexOf("&")).Trim();
+                var str2 = errorCode.Substring(errorCode.IndexOf("&") + 1).Trim();
+
+                return (Match(value, str1) && Match(value, str2));
+            }
+
+            if (Regex.IsMatch(errorCode, reg2))
+            {
+                errorCode = GetString(errorCode, '(');
+
+                return !Match(value, errorCode);
+            }
+
+            if (Regex.IsMatch(errorCode, reg3) && Regex.IsMatch(value, reg3))
+            {
+                var stringWithin = GetString(errorCode, '[');
+                var symbol = stringWithin.Substring(0, 1);
+                var valueToCheckAgainst = int.Parse(stringWithin.Substring(stringWithin.IndexOf(symbol) + 1));
+                var actualValue = int.Parse(GetString(value, '['));
+
+                if (symbol == ">")
+                    if (actualValue > valueToCheckAgainst) return true;
+                if (symbol == "<")
+                    if (actualValue < valueToCheckAgainst) return true;
+
+                return false;
+            }
+            return value.Contains(errorCode);
+        }
+
+        private readonly Dictionary<char, char> Enclosing = new Dictionary<char, char>() {
+            { '[', ']' },
+            { '(', ')' }
+        };
+
+        private string GetString(string value, char startingChar, bool getLast = false)
+        {
+            if (!Enclosing.ContainsKey(startingChar))
+                throw new ArgumentException("startingChar argument not found in Enclosing Dictionary!");
+
+            int closingIndex = (getLast) ? value.LastIndexOf(Enclosing[startingChar]) : value.IndexOf(Enclosing[startingChar]);
+
+            return value.Substring(value.IndexOf(startingChar) + 1, closingIndex - value.IndexOf(startingChar) - 1).Trim();
         }
 
         static void Main(string[] args)
@@ -49,13 +101,13 @@ namespace LogErrorValidator
             int lineCounter = 1;
             Program instance = new Program();
 
-            foreach (string error in File.ReadLines(@"C:\Users\Razer Stealth Blade\source\repos\LogErrorValidator\test.txt"))
+            foreach (string line in File.ReadLines(@"C:\Temp\test.txt"))
             {
-                var result = instance.Checking(error, "");
-                if (result == true)
-                    Console.WriteLine($"Error of \"{error}\" detected in line {lineCounter}");
+                if (instance.Checking(line, ""))
+                    Console.WriteLine($"Detected in line {lineCounter}: {line}");
                 lineCounter++;
             }
+
             Console.ReadKey();
         }
     }
